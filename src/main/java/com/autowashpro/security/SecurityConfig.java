@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/vehicle-types/**").permitAll()
                 .requestMatchers("/api/services/**").permitAll()
                 .requestMatchers("/api/bookings/slots").permitAll()
+                .requestMatchers("/api/transactions/payos/webhook").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/api/staff/**").hasAnyRole("STAFF","MANAGER","ADMIN")
