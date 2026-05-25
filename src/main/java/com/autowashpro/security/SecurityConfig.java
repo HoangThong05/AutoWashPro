@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/services/**").permitAll()
                 .requestMatchers("/api/bookings/slots").permitAll()
                 .requestMatchers("/api/transactions/payos/webhook").permitAll()
+                .requestMatchers("/api/promotions/active").permitAll()
+                .requestMatchers("/api/promotions/check/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/api/staff/**").hasAnyRole("STAFF","MANAGER","ADMIN")
