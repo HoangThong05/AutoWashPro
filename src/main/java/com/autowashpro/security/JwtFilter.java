@@ -34,11 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7); // Bỏ "Bearer "
-
         if (jwtUtil.isValid(token)) {
             String email = jwtUtil.extractEmail(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
