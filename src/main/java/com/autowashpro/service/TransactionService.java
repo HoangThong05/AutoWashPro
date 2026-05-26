@@ -22,6 +22,7 @@ public class TransactionService {
     private final CustomerRepository customerRepository;
     private final PromotionRepository promotionRepository;
     private final PayOSService payOSService;
+    private final LoyaltyService loyaltyService;
 
     @Transactional
     public TransactionResponse createTransaction(String email, TransactionRequest req) {
@@ -107,6 +108,8 @@ public class TransactionService {
             booking.setStatus("COMPLETED");
             bookingRepository.save(booking);
             transactionRepository.save(transaction);
+            // Tự động cộng điểm sau thanh toán 
+    loyaltyService.addPointsAfterPayment(customer, finalAmount.intValue());
 
         } else if ("BANK_TRANSFER".equals(req.getPaymentMethod())) {
             transaction.setPaymentStatus("PENDING");

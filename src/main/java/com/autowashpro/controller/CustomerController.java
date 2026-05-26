@@ -1,7 +1,6 @@
 package com.autowashpro.controller;
 
 import com.autowashpro.dto.response.CustomerDTO;
-import com.autowashpro.entity.Customer;
 import com.autowashpro.entity.User;
 import com.autowashpro.repository.CustomerRepository;
 import com.autowashpro.repository.UserRepository;
@@ -11,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController

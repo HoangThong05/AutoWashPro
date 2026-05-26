@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final UserDetailsServiceImpl userDetailsService; // ← thêm dòng này
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/transactions/payos/webhook").permitAll()
                 .requestMatchers("/api/promotions/active").permitAll()
                 .requestMatchers("/api/promotions/check/**").permitAll()
+                .requestMatchers("/api/loyalty/rewards").permitAll() // Xem danh sách quà thì ai xem cũng được
+                .requestMatchers("/api/loyalty/**").authenticated()   // Tất cả các hành động đổi quà, xem lịch sử cần phải ĐĂNG NHẬP
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/api/staff/**").hasAnyRole("STAFF","MANAGER","ADMIN")
