@@ -1,7 +1,6 @@
 package com.autowashpro.controller;
 
 import com.autowashpro.dto.response.MemberTierDTO;
-import com.autowashpro.entity.MemberTier;
 import com.autowashpro.repository.MemberTierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
