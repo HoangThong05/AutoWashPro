@@ -43,4 +43,28 @@ public class AuthController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(authService.getMe(userDetails.getUsername()));
     }
+    /** POST /api/auth/forgot-password — Gửi email reset */
+@PostMapping("/forgot-password")
+public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+    try {
+        authService.forgotPassword(body.get("email"));
+        return ResponseEntity.ok(Map.of("message",
+                "Email đặt lại mật khẩu đã được gửi! Vui lòng kiểm tra hộp thư."));
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", e.getMessage()));
+    }
+}
+
+/** POST /api/auth/reset-password — Đặt lại mật khẩu */
+@PostMapping("/reset-password")
+public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+    try {
+        authService.resetPassword(body.get("token"), body.get("newPassword"));
+        return ResponseEntity.ok(Map.of("message", "Đặt lại mật khẩu thành công!"));
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", e.getMessage()));
+    }
+}
 }

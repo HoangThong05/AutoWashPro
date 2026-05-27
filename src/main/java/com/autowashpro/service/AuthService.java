@@ -3,13 +3,17 @@ package com.autowashpro.service;
 import com.autowashpro.dto.request.LoginRequest;
 import com.autowashpro.dto.request.RegisterRequest;
 import com.autowashpro.dto.response.UserDTO;
+import com.autowashpro.entity.PasswordReset;
 import com.autowashpro.entity.User;
+import com.autowashpro.repository.PasswordResetRepository;
 import com.autowashpro.repository.UserRepository;
 import com.autowashpro.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -19,6 +23,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PasswordResetRepository passwordResetRepository;
+    private final EmailService emailService;
 
     public Map<String, Object> register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) {
@@ -68,4 +74,45 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return UserDTO.fromEntity(user);
     }
+
+    /* ===== QUÊN MẬT KHẨU ===== */
+@Transactional
+public void forgotPassword(String email) {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
+
+    // Xóa token cũ nếu có
+    passwordResetRepository.deleteByUser_UserId(user.getUserId());
+
+    // Tạo token mới
+    String token = java.util.UUID.randomUUID().toString();
+
+    PasswordReset reset = new PasswordReset();
+    reset.setUser(user);
+    reset.setToken(token);
+    reset.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+    reset.setUsed(false);
+    passwordResetRepository.save(reset);
+
+    // Gửi email
+    emailService.sendResetPasswordEmail(email, token);
+}
+
+/* ===== ĐẶT LẠI MẬT KHẨU ===== */
+@Transactional
+public void resetPassword(String token, String newPassword) {
+    PasswordReset reset = passwordResetRepository.findByTokenAndUsedFalse(token)
+            .orElseThrow(() -> new RuntimeException("Token không hợp lệ hoặc đã hết hạn!"));
+
+    if (reset.getExpiresAt().isBefore(LocalDateTime.now())) {
+        throw new RuntimeException("Token đã hết hạn! Vui lòng yêu cầu lại.");
+    }
+
+    User user = reset.getUser();
+    user.setPasswordHash(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+
+    reset.setUsed(true);
+    passwordResetRepository.save(reset);
+}
 }
