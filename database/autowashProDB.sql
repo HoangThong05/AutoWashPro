@@ -831,3 +831,6 @@ GO
 SELECT email, password_hash FROM Users;
 SELECT * FROM Customers WHERE CustomerID = 1;
 SELECT * FROM LoyaltyLogs WHERE CustomerID = 1;
+
+
+SELECT email, password_hash FROM Users WHERE email = 'test@gmail.com'
