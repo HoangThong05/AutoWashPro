@@ -552,6 +552,37 @@ CREATE TABLE Feedbacks (
 );
 GO
 
+/*
+	CONTACTS
+*/
+CREATE TABLE Contacts (
+    ContactID   INT IDENTITY(1,1) PRIMARY KEY,
+    full_name   NVARCHAR(100) NOT NULL,
+    email       NVARCHAR(100) NOT NULL,
+    phone       NVARCHAR(20) NULL,
+    message     NVARCHAR(MAX) NOT NULL,
+    status      NVARCHAR(20) NOT NULL DEFAULT 'UNREAD'
+                CHECK (status IN ('UNREAD','READ','RESOLVED')),
+    reply       NVARCHAR(MAX) NULL,
+    handled_by  INT NULL FOREIGN KEY REFERENCES Users(UserID),
+    handled_at  DATETIME NULL,
+    created_at  DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+/*
+	CONTACTMESSAGES
+*/
+CREATE TABLE ContactMessages (
+    MessageID   INT IDENTITY(1,1) PRIMARY KEY,
+    ContactID   INT NOT NULL FOREIGN KEY REFERENCES Contacts(ContactID),
+    sender_type NVARCHAR(20) NOT NULL CHECK (sender_type IN ('CUSTOMER','STAFF')),
+    message     NVARCHAR(MAX) NOT NULL,
+    sender_id   INT NULL FOREIGN KEY REFERENCES Users(UserID),
+    created_at  DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+
+
 
 /* ============================================================
    ALTER TABLE — Thêm FK vòng tròn sau khi tất cả bảng đã tạo
@@ -818,6 +849,8 @@ GO
 -- SELECT * FROM WalkInCustomers;
 -- SELECT * FROM PasswordResets;
 -- SELECT * FROM RefreshTokens;	
+-- SELECT * FROM Contacts;
+-- SELECT * FROM ContactMessages;
 -- SELECT * FROM vw_CustomerOverview;
 -- SELECT * FROM vw_BookingDetail;
 -- SELECT * FROM vw_DailyRevenue;
@@ -829,8 +862,12 @@ GO
 
 
 SELECT email, password_hash FROM Users;
-SELECT * FROM Customers WHERE CustomerID = 1;
-SELECT * FROM LoyaltyLogs WHERE CustomerID = 1;
 
 
-SELECT email, password_hash FROM Users WHERE email = 'test@gmail.com'
+	UPDATE Customers 
+	SET total_washes = 60,
+		total_spend = 50000000
+	WHERE CustomerID = 2;
+
+ALTER TABLE Contacts 
+ALTER COLUMN message NVARCHAR(MAX) NULL;

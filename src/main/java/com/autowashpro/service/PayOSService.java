@@ -1,8 +1,10 @@
 package com.autowashpro.service;
 
 import com.autowashpro.entity.Booking;
+import com.autowashpro.entity.Customer;
 import com.autowashpro.entity.Transaction;
 import com.autowashpro.repository.BookingRepository;
+import com.autowashpro.repository.CustomerRepository;
 import com.autowashpro.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +26,8 @@ public class PayOSService {
     private final PayOS payOS;
     private final TransactionRepository transactionRepository;
     private final BookingRepository bookingRepository;
-
+    private final LoyaltyService loyaltyService;
+    private final CustomerRepository customerRepository;
     @Value("${payos.return-url}")
     private String returnUrl;
 
@@ -89,6 +92,11 @@ public class PayOSService {
             Booking booking = transaction.getBooking();
             booking.setStatus("COMPLETED");
             bookingRepository.save(booking);
+
+            // ← THÊM: Cộng điểm sau PayOS thanh toán thành công
+        Customer customer = booking.getCustomer();
+        loyaltyService.addPointsAfterPayment(
+                customer, transaction.getFinalAmount().intValue());
         }
     }
 }
