@@ -25,7 +25,7 @@ public class ServiceController {
             @PathVariable String category) {
         return ResponseEntity.ok(serviceService.getByCategory(category));
     }
-
+   
     @GetMapping("/{id}")
     public ResponseEntity<ServiceResponse> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(serviceService.getById(id));
