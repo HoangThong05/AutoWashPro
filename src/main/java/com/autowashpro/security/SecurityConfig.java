@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/feedbacks/booking/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/feedbacks").authenticated()
                 .requestMatchers("/api/feedbacks/**").hasAnyRole("STAFF","MANAGER","ADMIN")
+                .requestMatchers("/api/walkin/**").hasAnyRole("STAFF","MANAGER","ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/api/staff/**").hasAnyRole("STAFF","MANAGER","ADMIN")
