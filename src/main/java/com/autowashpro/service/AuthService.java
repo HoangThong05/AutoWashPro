@@ -115,4 +115,19 @@ public void resetPassword(String token, String newPassword) {
     reset.setUsed(true);
     passwordResetRepository.save(reset);
 }
+
+/* ===== ĐỔI MẬT KHẨU ===== */
+@Transactional
+public void changePassword(String email, String oldPassword, String newPassword) {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+        throw new RuntimeException("Mật khẩu cũ không đúng!");
+    }
+
+    user.setPasswordHash(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+}
+
 }

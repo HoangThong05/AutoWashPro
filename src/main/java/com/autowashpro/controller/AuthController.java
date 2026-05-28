@@ -67,4 +67,20 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
                 .body(Map.of("message", e.getMessage()));
     }
 }
+/** PUT /api/auth/change-password — Đổi mật khẩu */
+@PutMapping("/change-password")
+public ResponseEntity<?> changePassword(
+        @AuthenticationPrincipal UserDetails userDetails,
+        @RequestBody Map<String, String> body) {
+    try {
+        authService.changePassword(
+                userDetails.getUsername(),
+                body.get("oldPassword"),
+                body.get("newPassword"));
+        return ResponseEntity.ok(Map.of("message", "Đổi mật khẩu thành công!"));
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", e.getMessage()));
+    }
+}
 }
